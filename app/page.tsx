@@ -133,7 +133,9 @@ export default function BiolinkPage() {
   };
 
   return (
-    <main className="w-full h-full bg-[linear-gradient(135deg,#0c0822_0%,#160d2b_50%,#090d22_100%)] bg-fixed text-white antialiased font-sans p-4">
+    <main className="relative w-full min-h-screen bg-[#0d0d11] text-white antialiased font-sans p-4 overflow-hidden">
+      <div className="absolute -top-24 -left-24 w-96 h-96 bg-orange-500/20 rounded-full blur-[128px] pointer-events-none" />
+      <div className="absolute top-1/2 -right-24 w-80 h-80 bg-orange-600/15 rounded-full blur-[100px] pointer-events-none" />
       <div className="w-full h-full relative flex flex-col items-center justify-start *:select-none max-w-xl mx-auto">
         {/* Profile / Banner Card */}
         <motion.div
