@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-import { BiolinkProvider } from "@/context/BiolinkContext"; // Sesuaikan path-nya
-
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -26,9 +24,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="id">
-      <body>
-        <BiolinkProvider>{children}</BiolinkProvider>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

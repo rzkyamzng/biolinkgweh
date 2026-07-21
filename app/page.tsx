@@ -4,7 +4,6 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowUpRight, ShieldAlert } from "lucide-react";
 import { FaInstagram, FaWhatsapp } from "react-icons/fa";
-import { useBiolink } from "@/context/BiolinkContext";
 
 // Konfigurasi varian animasi Framer Motion
 const itemVariants = {
@@ -27,7 +26,6 @@ const INITIAL_PRODUCTS = [
       "Glacier M416 Max Level, X-Suit Pharaoh, Winrate 72%, Account Polos Safe Login.",
     price: 2500000,
     formattedPrice: "Rp 2.500.000",
-    rating: 4.9,
     tag: "Hot Item",
     image:
       "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=500&auto=format&fit=crop",
@@ -41,7 +39,6 @@ const INITIAL_PRODUCTS = [
       "Full Skin Collector, Legend 3x, Winrate 68%, Hero Unlocked 120+ All Emblem.",
     price: 1250000,
     formattedPrice: "Rp 1.250.000",
-    rating: 4.8,
     tag: "Top Sale",
     image:
       "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?q=80&w=500&auto=format&fit=crop",
@@ -56,7 +53,7 @@ const INITIAL_PRODUCTS = [
       "Fitur Pro Unlocked, Garansi Full 12 Bulan, Bebas Desain Elemen Premium Tanpa Limit.",
     price: 45000,
     formattedPrice: "Rp 45.000",
-    rating: 5.0,
+
     tag: "Best Seller",
     image:
       "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=500&auto=format&fit=crop",
@@ -70,15 +67,14 @@ const INITIAL_PRODUCTS = [
       "Bebas Pakai Fitur AI, Efek Pro, Export Video 4K 60FPS Tanpa Watermark.",
     price: 25000,
     formattedPrice: "Rp 25.000",
-    rating: 4.9,
+
     tag: "Murah",
     image:
       "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?q=80&w=500&auto=format&fit=crop",
   },
 ];
 
-export default function BiolinkPage() {
-  const { data } = useBiolink();
+export default function HomePage() {
   const [isExpanded, setIsExpanded] = useState(false);
   const [products] = useState(INITIAL_PRODUCTS);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -144,7 +140,7 @@ export default function BiolinkPage() {
           className="w-full h-44 rounded-lg mb-2 md:mb-3 gap-2 md:gap-3 border border-purple-500/30 shadow-2xl relative overflow-hidden group"
         >
           <img
-            src={data.bannerUrl}
+            src="https://images.unsplash.com/photo-1782215670710-8d2675bc0fbd?q=80&w=1632&auto=format&fit=crop"
             alt="Banner"
             className="absolute inset-0 w-full h-full object-cover opacity-85 scale-105 transition-transform duration-700 group-hover:scale-100"
           />
@@ -153,15 +149,15 @@ export default function BiolinkPage() {
             {/* Avatar */}
             <motion.div className="w-24 h-24 flex-shrink-0 rounded-full flex items-center justify-center shadow-lg border-2 border-purple-400 overflow-hidden">
               <img
-                src={data.avatarUrl}
-                alt={data.name}
+                src="https://images.unsplash.com/photo-1782215670710-8d2675bc0fbd?q=80&w=1632&auto=format&fit=crop"
+                alt="Anomaly Game Supply"
                 className="w-full h-full object-cover"
               />
             </motion.div>
 
             <div className="flex flex-col text-left">
               <motion.h1 className="text-xl sm:text-2xl font-bold tracking-wide text-white">
-                {data.name}
+                Anomaly Game Supply
               </motion.h1>
 
               {/* Bio */}
@@ -171,16 +167,8 @@ export default function BiolinkPage() {
                     isExpanded ? "line-clamp-none" : "line-clamp-2"
                   }`}
                 >
-                  {data.bio}
+                  Suka Suka Gue
                 </motion.p>
-                {data.bio && data.bio.length > 120 && (
-                  <button
-                    onClick={() => setIsExpanded(!isExpanded)}
-                    className="text-[12px] sm:text-xs text-purple-400 hover:text-purple-300 mt-1 font-medium block focus:outline-none"
-                  >
-                    {isExpanded ? "Sembunyikan" : "Baca Selengkapnya"}
-                  </button>
-                )}
               </div>
 
               {/* Social Icons */}
@@ -336,7 +324,7 @@ export default function BiolinkPage() {
                             {product.subCategory}
                           </span>
                           <span className="flex items-center gap-1 text-amber-400 font-semibold">
-                            ★ {product.rating}
+                            Ready Stock
                           </span>
                         </div>
 

@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Model User (Role diubah dari enum menjadi String)
+model User {
+  id        String       @id @default(cuid())
+  name      String?
+  email     String?      @unique
+  avatarUrl String?
+  bannerUrl String?      // <-- Tambahkan field ini
+  bio       String?
+  socials   SocialLink[]
+  profile   Profile?
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+}
+
+model Profile {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bio       String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SocialLink {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  platform  String // Misal: "GitHub", "Twitter", "Instagram"
+  url       String // Misal: "https://github.com"
+  createdAt DateTime @default(now())
+}
+
+model Category {
+  id        String    @id @default(cuid())
+  name      String
+  slug      String    @unique
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+// Model Product (Hapus @db.Text)
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  price       Float
+  image       String?
+  badge       String?
+  rating      Float?   @default(0)
+  categoryId  String
+  category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Model SEOSetting (Hapus @db.Text)
+model SEOSetting {
+  id          String   @id @default("default")
+  metaTitle   String
+  metaKeyword String
+  metaDesc    String
+  updatedAt   DateTime @updatedAt
+}
