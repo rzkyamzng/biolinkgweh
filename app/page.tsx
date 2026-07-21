@@ -151,10 +151,7 @@ export default function BiolinkPage() {
           <div className="absolute inset-0 bg-slate-950/60 hover:bg-slate-950/70 transition-colors duration-500" />
           <div className="absolute inset-0 flex flex-row items-center p-8 gap-5">
             {/* Avatar */}
-            <motion.div
-              variants={itemVariants}
-              className="w-24 h-24 flex-shrink-0 rounded-full flex items-center justify-center shadow-lg border-2 border-purple-400 overflow-hidden"
-            >
+            <motion.div className="w-24 h-24 flex-shrink-0 rounded-full flex items-center justify-center shadow-lg border-2 border-purple-400 overflow-hidden">
               <img
                 src={data.avatarUrl}
                 alt={data.name}
@@ -163,17 +160,13 @@ export default function BiolinkPage() {
             </motion.div>
 
             <div className="flex flex-col text-left">
-              <motion.h1
-                variants={itemVariants}
-                className="text-xl sm:text-2xl font-bold tracking-wide text-white"
-              >
+              <motion.h1 className="text-xl sm:text-2xl font-bold tracking-wide text-white">
                 {data.name}
               </motion.h1>
 
               {/* Bio */}
               <div>
                 <motion.p
-                  variants={itemVariants}
                   className={`text-[12px] sm:text-xs text-gray-300 mt-1 transition-all duration-300 ${
                     isExpanded ? "line-clamp-none" : "line-clamp-2"
                   }`}
@@ -204,10 +197,7 @@ export default function BiolinkPage() {
         </motion.div>
 
         {/* Call-to-Action Buttons */}
-        <motion.div
-          variants={itemVariants}
-          className="w-full grid grid-cols-2 mb-2 md:mb-3 gap-2 md:gap-3"
-        >
+        <motion.div className="w-full grid grid-cols-2 mb-2 md:mb-3 gap-2 md:gap-3">
           <motion.a
             href="https://api.whatsapp.com/send/?phone=6285173412902&text=Halo+min%2C+saya+ingin+menjual+akun+PUBG&type=phone_number&app_absent=0"
             target="_blank"
@@ -419,13 +409,13 @@ export default function BiolinkPage() {
             whileTap={{ scale: 0.99 }}
             className="w-full h-28 flex items-center justify-between bg-[#2d121c]/90 hover:bg-[#3d1624] border border-red-500/20 hover:border-red-500/40 rounded-lg p-4 shadow-[0_0_15px_rgba(239,68,68,0.05)] transition-all cursor-pointer group"
           >
-            <div className="flex items-center gap-4">
-              <div className="w-11 h-11 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 shadow-inner">
-                <ShieldAlert className="w-5 h-5 animate-pulse" />
+            <div className="flex items-center gap-4 animate-pulse">
+              <div className="w-16 h-16 flex items-center justify-center text-red-500 shadow-inner">
+                <ShieldAlert className="w-12 h-12" />
               </div>
 
               <div className="flex flex-col gap-1">
-                <span className="text-[9px] font-extrabold tracking-widest text-red-400 bg-red-500/10 border border-red-500/20 rounded-md uppercase w-max px-1.5 py-0.5">
+                <span className="text-[9px] font-extrabold tracking-widest text-red-400 bg-red-500/10 border border-red-500/20 rounded-md uppercase w-max p-2">
                   ⚠️ Blacklist
                 </span>
                 <p className="text-[12px] text-gray-400 font-medium tracking-wide">
