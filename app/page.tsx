@@ -9,7 +9,7 @@ import {
   ShieldCheck,
   ShieldAlert,
 } from "lucide-react";
-import { FaTiktok, FaInstagram, FaYouTube, FaWhatsapp } from "react-icons/fa";
+import { FaTiktok, FaInstagram, FaWhatsapp } from "react-icons/fa";
 import { useState, useEffect } from "react";
 
 // Konfigurasi varian animasi Framer Motion
