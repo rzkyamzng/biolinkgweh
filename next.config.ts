@@ -1,14 +1,8 @@
-/** @type {import('next').NextConfig} */
-const nextconfig = {
-  typescript: {
-    // !! PERINGATAN !!
-    // Mengizinkan build selesai meskipun ada kesalahan TypeScript.
-    ignoreBuildErrors: true,
-  },
-  eslint: {
-    // Mengabaikan error ESLint saat build
-    ignoreDuringBuilds: true,
-  },
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  /* config options here */
+  reactCompiler: true,
 };
 
-module.exports = nextconfig;
+export default nextConfig;

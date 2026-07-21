@@ -1,16 +1,10 @@
 "use client";
 
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { ArrowUpRight, ShieldAlert } from "lucide-react";
+import { FaInstagram, FaWhatsapp } from "react-icons/fa";
 import { useBiolink } from "@/context/BiolinkContext";
-import { motion, AnimatePresence, useAnimationControls } from "framer-motion";
-import Link from "next/link";
-import {
-  MessageCircle,
-  ArrowUpRight,
-  ShieldCheck,
-  ShieldAlert,
-} from "lucide-react";
-import { FaTiktok, FaInstagram, FaWhatsapp } from "react-icons/fa";
-import { useState, useEffect } from "react";
 
 // Konfigurasi varian animasi Framer Motion
 const itemVariants = {
@@ -52,7 +46,6 @@ const INITIAL_PRODUCTS = [
     image:
       "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?q=80&w=500&auto=format&fit=crop",
   },
-
   // Kategori 2: Akun Premium
   {
     id: 3,
@@ -86,10 +79,7 @@ const INITIAL_PRODUCTS = [
 
 export default function BiolinkPage() {
   const { data } = useBiolink();
-  const whatsappUrl = `https://wa.me/${data.whatsappNumber}?text=${encodeURIComponent(data.whatsappMessage)}`;
   const [isExpanded, setIsExpanded] = useState(false);
-  const text =
-    "⚠️ WASPADA PENIPUAN! Hati-hati Penipuan mengatasnamakan Anomaly Game Supply • Rekening hanya atas nama Alex Joshua • ";
   const [products] = useState(INITIAL_PRODUCTS);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
@@ -113,6 +103,7 @@ export default function BiolinkPage() {
     const scrollPosition = container.scrollLeft;
     const cardWidth = container.offsetWidth;
     const newIndex = Math.round(scrollPosition / cardWidth);
+
     if (
       newIndex !== currentIndex &&
       newIndex >= 0 &&
@@ -141,11 +132,10 @@ export default function BiolinkPage() {
     setCurrentIndex(0);
   };
 
-  const currentProduct = filteredProducts[currentIndex];
-
   return (
-    <main className="w-full h-full bg-[linear-gradient(135deg, #0c0822 0%, #160d2b 50%, #090d22 100%)] bg-fixed text-white antialiased w-full font-sans p-4">
+    <main className="w-full h-full bg-[linear-gradient(135deg,#0c0822_0%,#160d2b_50%,#090d22_100%)] bg-fixed text-white antialiased font-sans p-4">
       <div className="w-full h-full relative flex flex-col items-center justify-start *:select-none max-w-xl mx-auto">
+        {/* Profile / Banner Card */}
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -158,7 +148,7 @@ export default function BiolinkPage() {
           />
           <div className="absolute inset-0 bg-slate-950/60 hover:bg-slate-950/70 transition-colors duration-500" />
           <div className="absolute inset-0 flex flex-row items-center p-8 gap-5">
-            {/* Avatar (dikecilkan sedikit agar proporsional) */}
+            {/* Avatar */}
             <motion.div
               variants={itemVariants}
               className="w-24 h-24 flex-shrink-0 rounded-full flex items-center justify-center shadow-lg border-2 border-purple-400 overflow-hidden"
@@ -178,11 +168,11 @@ export default function BiolinkPage() {
                 {data.name}
               </motion.h1>
 
-              {/* BIO */}
+              {/* Bio */}
               <div>
                 <motion.p
                   variants={itemVariants}
-                  className={`text-[12px] sm:text-xs text-gray-300 mt-1 line-clamp-2 transition-all duration-300 ${
+                  className={`text-[12px] sm:text-xs text-gray-300 mt-1 transition-all duration-300 ${
                     isExpanded ? "line-clamp-none" : "line-clamp-2"
                   }`}
                 >
@@ -197,7 +187,8 @@ export default function BiolinkPage() {
                   </button>
                 )}
               </div>
-              {/* Ikon Sosial (dikecilkan sedikit, warna teks diganti) */}
+
+              {/* Social Icons */}
               <div className="flex gap-4 mt-3 text-gray-200 text-lg">
                 <a href="#" className="hover:text-pink-400 transition-colors">
                   <FaWhatsapp />
@@ -210,7 +201,7 @@ export default function BiolinkPage() {
           </div>
         </motion.div>
 
-        {/* BUTTON UTAMA */}
+        {/* Call-to-Action Buttons */}
         <motion.div
           variants={itemVariants}
           className="w-full grid grid-cols-2 mb-2 md:mb-3 gap-2 md:gap-3"
@@ -220,33 +211,27 @@ export default function BiolinkPage() {
             target="_blank"
             rel="noopener noreferrer"
             whileTap={{ scale: 0.95 }}
-            className="w full flex items-center justify-center bg-gradient-to-r from-fuchsia-500 to-purple-600 hover:from-fuchsia-600 hover:to-purple-700 py-3 rounded-lg font-bold text-sm shadow-md transition-all"
+            className="w-full flex items-center justify-center bg-gradient-to-r from-fuchsia-500 to-purple-600 hover:from-fuchsia-600 hover:to-purple-700 py-3 rounded-lg font-bold text-sm shadow-md transition-all"
           >
             Jual Akun
           </motion.a>
 
-          {/* Second Button */}
-          <motion.button
-            variants={itemVariants}
+          <motion.a
+            href="https://api.whatsapp.com/send/?phone=6285173412902&text=Halo+min%2C+saya+mau+TopUp+UC&type=phone_number&app_absent=0"
+            target="_blank"
+            rel="noopener noreferrer"
             whileTap={{ scale: 0.95 }}
-            className="bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 py-3 rounded-lg font-bold text-sm shadow-md transition-all"
+            className="w-full flex items-center justify-center bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 py-3 rounded-lg font-bold text-sm shadow-md transition-all"
           >
-            <motion.a
-              whileTap={{ scale: 0.99 }}
-              href="https://api.whatsapp.com/send/?phone=6285173412902&text=Halo+min%2C+saya+mau+TopUp+UC&type=phone_number&app_absent=0"
-            >
-              <span className="w-full flex justify-center items-center text-md">
-                TopUp
-              </span>
-            </motion.a>
-          </motion.button>
+            TopUp
+          </motion.a>
         </motion.div>
 
-        {/* Product Card */}
+        {/* Product Section */}
         <div className="w-full max-w-2xl mx-auto flex flex-col gap-4 p-4 mb-2 md:mb-3 rounded-lg bg-[#150e25]">
-          {/* 1. Header Filter & Search */}
+          {/* Filter & Search Header */}
           <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between w-full">
-            {/* Input Pencarian Nama / Harga */}
+            {/* Search Input */}
             <div className="relative w-full sm:w-1/2">
               <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-purple-300/40">
                 <svg
@@ -283,7 +268,7 @@ export default function BiolinkPage() {
               )}
             </div>
 
-            {/* Filter Kategori (Horizontal Scrollable di Mobile) */}
+            {/* Category Filter */}
             <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto no-scrollbar py-1">
               <button
                 onClick={handleShowAll}
@@ -326,10 +311,9 @@ export default function BiolinkPage() {
             </div>
           </div>
 
-          {/* 2. Main Product Card Area */}
+          {/* Product Cards List */}
           {filteredProducts.length > 0 ? (
             <div className="relative group">
-              {/* Scrollable Container dengan Native Touch/Swipe */}
               <div
                 id="product-container"
                 onScroll={handleScroll}
@@ -340,7 +324,7 @@ export default function BiolinkPage() {
                     key={product.id}
                     className="w-full flex-shrink-0 snap-center snap-always flex flex-col sm:flex-row rounded-lg p-3 md:p-4 gap-3 md:gap-4 bg-[#1f1635]/80 border border-purple-500/20 hover:border-purple-500/50 transition-all duration-300 shadow-xl backdrop-blur-md"
                   >
-                    {/* Image Section */}
+                    {/* Image */}
                     <div className="relative w-full sm:w-1/3 h-40 sm:h-auto rounded-lg overflow-hidden bg-purple-950/40 flex-shrink-0">
                       <img
                         src={product.image}
@@ -352,7 +336,7 @@ export default function BiolinkPage() {
                       </span>
                     </div>
 
-                    {/* Content Section */}
+                    {/* Content */}
                     <div className="flex-1 flex flex-col justify-between py-1 gap-2 sm:gap-0">
                       <div>
                         <div className="flex items-center justify-between text-xs text-purple-300/70 mb-1">
@@ -392,7 +376,7 @@ export default function BiolinkPage() {
                 ))}
               </div>
 
-              {/* 4. Dots Indicators (Aktif di Mobile & Desktop) */}
+              {/* Dots Indicators */}
               {filteredProducts.length > 1 && (
                 <div className="flex justify-center gap-1.5 mt-3">
                   {filteredProducts.map((_, idx) => (
@@ -410,7 +394,7 @@ export default function BiolinkPage() {
               )}
             </div>
           ) : (
-            /* State Jika Produk Tidak Ditemukan */
+            /* Empty State */
             <div className="w-full h-40 flex flex-col items-center justify-center rounded-lg bg-[#1f1635]/50 border border-purple-500/10 text-center p-4">
               <p className="text-purple-300/70 text-sm font-medium mb-2">
                 Produk tidak ditemukan untuk "{searchQuery}"
@@ -425,9 +409,8 @@ export default function BiolinkPage() {
           )}
         </div>
 
-        {/* SEKSI: PARTNER & SERVICES */}
+        {/* Partner / Blacklist Section */}
         <div className="w-full flex flex-col mb-2 md:mb-3 gap-2 md:gap-3">
-          {/* PARTNER BLACKLIST (FULL WIDTH DENGAN GLOW MERAH TIPIS) */}
           <motion.a
             href="#"
             whileHover={{ scale: 1.01, translateY: -2 }}
@@ -435,14 +418,12 @@ export default function BiolinkPage() {
             className="w-full h-28 flex items-center justify-between bg-[#2d121c]/90 hover:bg-[#3d1624] border border-red-500/20 hover:border-red-500/40 rounded-lg p-4 shadow-[0_0_15px_rgba(239,68,68,0.05)] transition-all cursor-pointer group"
           >
             <div className="flex items-center gap-4">
-              {/* Icon Bulat Merah Negatif */}
               <div className="w-11 h-11 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 shadow-inner">
                 <ShieldAlert className="w-5 h-5 animate-pulse" />
               </div>
 
               <div className="flex flex-col gap-1">
-                {/* Tag Badge Blacklist Kecil */}
-                <span className="text-[9px] font-extrabold tracking-widest text-red-400 bg-red-500/10 border border-red-500/20 rounded-md uppercase w-max">
+                <span className="text-[9px] font-extrabold tracking-widest text-red-400 bg-red-500/10 border border-red-500/20 rounded-md uppercase w-max px-1.5 py-0.5">
                   ⚠️ Blacklist
                 </span>
                 <p className="text-[12px] text-gray-400 font-medium tracking-wide">
@@ -451,13 +432,14 @@ export default function BiolinkPage() {
               </div>
             </div>
 
-            {/* Right Icon Arrow */}
             <div className="w-9 h-9 rounded-lg bg-red-500/5 group-hover:bg-red-500/10 flex items-center justify-center text-red-400/70 group-hover:text-red-400 transition-colors">
               <ArrowUpRight className="w-5 h-5" />
             </div>
           </motion.a>
         </div>
-        <footer className="w-full text-center text-[10px] text-gray-500 mt-4 border-t border-white/5">
+
+        {/* Footer */}
+        <footer className="w-full text-center text-[10px] text-gray-500 mt-4 border-t border-white/5 pt-2">
           <p>Made with 💖</p>
         </footer>
       </div>
