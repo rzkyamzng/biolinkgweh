@@ -23,6 +23,18 @@
   animation-play-state: paused;
 }
 
+.no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* Sembunyikan scrollbar untuk IE, Edge, dan Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none !important; /* IE and Edge */
+  scrollbar-width: none !important; /* Firefox */
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
