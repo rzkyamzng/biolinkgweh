@@ -5,41 +5,29 @@ import bcrypt from "bcryptjs";
 const prisma = new PrismaClient();
 
 async function main() {
-  // Hash password terlebih dahulu
-  const hashedPassword = await bcrypt.hash("admin123", 10);
+  // Hash password '123456' (atau password pilihan kamu)
+  const hashedPassword = await bcrypt.hash("123456", 10);
 
-  // Email yang ingin didaftarkan sebagai Admin
-  const email = "anomalygs@gmail.com";
+  // Hapus user lama biar bersih
+  await prisma.user.deleteMany();
 
-  // Hapus user lama jika ada (agar tidak konflik)
-  await prisma.user.deleteMany({
-    where: { email },
-  });
-
-  // Buat akun Admin baru
-  const admin = await prisma.user.create({
+  // Buat user admin baru
+  await prisma.user.create({
     data: {
-      name: "Anomaly Admin",
-      email: email,
-      password: hashedPassword,
-      role: "ADMIN",
-      profile: {
-        create: {
-          bio: "Administrator Anomaly Game Supply",
-        },
-      },
+      email: "anomalygs@gmail.com", // <-- PASTIKAN EMAIL INI SAMA DENGAN FORM LOGIN
+      name: "Anomaly Game Supply",
+      password: hashedPassword, // <-- PASSWORD HARUS TER-HASH DENGAN BCRYPTS
     },
   });
 
-  console.log("✅ Akun Admin berhasil dibuat:", admin.email);
+  console.log("✅ Admin berhasil di-seed!");
 }
 
 main()
-  .then(async () => {
-    await prisma.$disconnect();
-  })
-  .catch(async (e) => {
+  .catch((e) => {
     console.error(e);
-    await prisma.$disconnect();
     process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
   });

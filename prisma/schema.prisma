@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = env("DATABASE_URL")
+  url      = "file:./dev.db"
 }
 
 // Model User (Role diubah dari enum menjadi String)
@@ -12,8 +12,9 @@ model User {
   id        String       @id @default(cuid())
   name      String?
   email     String?      @unique
+  password  String?      // <-- TAMBAHKAN BARIS INI
   avatarUrl String?
-  bannerUrl String?      // <-- Tambahkan field ini
+  bannerUrl String?
   bio       String?
   socials   SocialLink[]
   profile   Profile?
@@ -48,19 +49,24 @@ model Category {
   updatedAt DateTime  @updatedAt
 }
 
-// Model Product (Hapus @db.Text)
 model Product {
-  id          String   @id @default(cuid())
-  name        String
-  description String
-  price       Float
-  image       String?
+  id          String         @id @default(uuid())
+  title       String
+  description String                            // ✅ Cukup String biasa
+  price       Float                             // ✅ Gunakan Float untuk angka/harga
   badge       String?
-  rating      Float?   @default(0)
   categoryId  String
-  category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  category    Category       @relation(fields: [categoryId], references: [id])
+  images      ProductImage[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+model ProductImage {
+  id        String   @id @default(uuid())
+  url       String
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 }
 
 // Model SEOSetting (Hapus @db.Text)

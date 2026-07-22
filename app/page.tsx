@@ -5,6 +5,11 @@ import { motion } from "framer-motion";
 import { ArrowUpRight, ShieldAlert } from "lucide-react";
 import { FaInstagram, FaWhatsapp } from "react-icons/fa";
 
+import { prisma } from "@/lib/prisma";
+import HomeClient from "./home-client";
+
+export const dynamic = "force-dynamic";
+
 // Konfigurasi varian animasi Framer Motion
 const itemVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -80,7 +85,6 @@ export default function HomePage() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Semua");
-
   const filteredProducts = products.filter((item) => {
     const matchesSearch =
       item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
