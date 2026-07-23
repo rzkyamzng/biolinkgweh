@@ -3,6 +3,20 @@ import { Sidebar } from "@/components/admin/sidebar";
 import { Header } from "@/components/admin/header";
 import { NextAuthProvider } from "@/components/providers";
 
+import { getSettings } from "@/app/actions/settings";
+import type { Metadata } from "next";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSettings();
+
+  return {
+    title: settings?.metaTitle || "Anomaly Game Supply - Jual Akun & TopUp",
+    description:
+      settings?.metaDescription ||
+      "Penyedia layanan top up dan jual beli akun game/premium terpercaya.",
+    keywords: settings?.metaKeywords || "pubg, mobile legends, topup",
+  };
+}
 export default function DashboardLayout({
   children,
 }: {
