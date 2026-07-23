@@ -52,8 +52,8 @@ model Category {
 model Product {
   id          String         @id @default(uuid())
   title       String
-  description String                            // ✅ Cukup String biasa
-  price       Float                             // ✅ Gunakan Float untuk angka/harga
+  description String                            
+  price       Float                             
   badge       String?
   categoryId  String
   category    Category       @relation(fields: [categoryId], references: [id])

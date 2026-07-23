@@ -69,15 +69,29 @@ export default function AddProductPage() {
   // Submit Handler
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (
-      !title ||
-      !description ||
-      !price ||
-      !categoryId ||
-      images.length === 0
-    ) {
-      alert("Harap lengkapi semua data wajib!");
-      return;
+
+    const payload = {
+      title,
+      description,
+      price,
+      categoryId,
+      badge,
+      images, // Array URL gambar hasil upload
+    };
+
+    const response = await fetch("/api/admin/products", {
+      method: "POST", // 👈 Pastikan nilainya 'POST' (huruf kapital)
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (response.ok) {
+      alert("Produk berhasil disimpan!");
+      window.location.href = "/admin/products/list";
+    } else {
+      alert("Gagal menyimpan produk");
     }
 
     setIsSubmitting(true);

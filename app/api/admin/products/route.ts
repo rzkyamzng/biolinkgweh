@@ -1,35 +1,46 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma"; // Sesuaikan lokasi prisma client
+import { prisma } from "@/lib/prisma";
 
-export async function POST(req: Request) {
+// 🟢 Menangani Method POST (Tambah Produk Baru)
+export async function POST(request: Request) {
   try {
-    const body = await req.json();
+    const body = await request.json();
     const { title, description, price, categoryId, badge, images } = body;
 
-    if (!title || !description || !price || !categoryId || !images?.length) {
+    // Validasi sederhana
+    if (!title || !description || !price || !categoryId) {
       return NextResponse.json(
-        { message: "Semua field wajib diisi" },
+        { message: "Mohon lengkapi semua field yang wajib diisi" },
         { status: 400 },
       );
     }
 
-    const product = await prisma.product.create({
+    // Simpan ke database menggunakan Prisma
+    const newProduct = await prisma.product.create({
       data: {
         title,
         description,
         price: parseFloat(price),
         categoryId,
         badge: badge || null,
-        images: {
-          create: images.map((url: string) => ({ url })),
-        },
+        // Jika kamu mengunggah gambar yang terhubung ke model ProductImage:
+        images:
+          images && images.length > 0
+            ? {
+                create: images.map((url: string) => ({ url })),
+              }
+            : undefined,
       },
     });
 
-    return NextResponse.json({ success: true, data: product }, { status: 201 });
-  } catch (error) {
     return NextResponse.json(
-      { message: "Gagal menambah produk", error },
+      { message: "Produk berhasil ditambahkan", data: newProduct },
+      { status: 201 },
+    );
+  } catch (error) {
+    console.error("Error adding product:", error);
+    return NextResponse.json(
+      { message: "Gagal menambahkan produk", error: String(error) },
       { status: 500 },
     );
   }

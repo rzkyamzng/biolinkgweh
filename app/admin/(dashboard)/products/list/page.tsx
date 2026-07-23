@@ -1,315 +1,150 @@
-"use client";
-
-import { useState } from "react";
-import { Search, Plus, Edit, Trash2, X, Check } from "lucide-react";
+import React from "react";
 import Link from "next/link";
+import { prisma } from "@/lib/prisma";
+import { FiEdit, FiTrash2, FiPlus, FiSearch } from "react-icons/fi";
+import { Plus } from "lucide-react";
 
-interface Product {
-  id: string;
-  name: string;
-  category: string;
-  price: number;
-  badge: string;
-}
+import DeleteProductButton from "@/components/DeleteProductButton";
+import SearchInput from "@/components/SearchInput";
 
-export default function ProductsListPage() {
-  // State untuk data produk
-  const [products, setProducts] = useState<Product[]>([
-    {
-      id: "1",
-      name: "PUBG Mobile Account Conqueror S18",
-      category: "Akun Game",
-      price: 2500000,
-      badge: "HOT ITEM",
+// Fungsi untuk mengambil data produk dari DB
+async function getProducts(searchQuery?: string) {
+  const products = await prisma.product.findMany({
+    where: searchQuery
+      ? {
+          title: {
+            contains: searchQuery,
+          },
+        }
+      : undefined,
+    include: {
+      category: true,
     },
-    {
-      id: "2",
-      name: "Canva Pro 1 Tahun Private",
-      category: "Akun Premium",
-      price: 45000,
-      badge: "BEST SELLER",
+    orderBy: {
+      createdAt: "desc",
     },
-  ]);
-
-  // State untuk Pencarian
-  const [search, setSearch] = useState("");
-
-  // State untuk Modal Tambah/Edit Produk
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-
-  // Form State
-  const [formData, setFormData] = useState({
-    name: "",
-    category: "Akun Game",
-    price: "",
-    badge: "HOT ITEM",
   });
 
-  // Filter produk berdasarkan input pencarian
-  const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(search.toLowerCase()),
-  );
+  return products;
+}
 
-  // Buka Modal untuk Tambah
-  const handleOpenAddModal = () => {
-    setEditingProduct(null);
-    setFormData({
-      name: "",
-      category: "Akun Game",
-      price: "",
-      badge: "HOT ITEM",
-    });
-    setIsModalOpen(true);
-  };
+export default async function ProductListPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string }>; // 👈 1. Ubah tipe menjadi Promise
+}) {
+  // 🟢 2. Unwrap searchParams menggunakan `await`
+  const resolvedSearchParams = await searchParams;
+  const query = resolvedSearchParams?.q || "";
 
-  // Buka Modal untuk Edit
-  const handleOpenEditModal = (product: Product) => {
-    setEditingProduct(product);
-    setFormData({
-      name: product.name,
-      category: product.category,
-      price: product.price.toString(),
-      badge: product.badge,
-    });
-    setIsModalOpen(true);
-  };
+  // 3. Ambil data berdasarkan query pencarian
+  const products = await getProducts(query);
 
-  // Fungsi Hapus Produk
-  const handleDelete = (id: string) => {
-    if (confirm("Apakah kamu yakin ingin menghapus produk ini?")) {
-      setProducts(products.filter((p) => p.id !== id));
-    }
-  };
-
-  // Fungsi Simpan (Tambah / Update)
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!formData.name || !formData.price) {
-      alert("Harap isi nama dan harga produk!");
-      return;
-    }
-
-    if (editingProduct) {
-      // Logic Update
-      setProducts(
-        products.map((p) =>
-          p.id === editingProduct.id
-            ? {
-                ...p,
-                name: formData.name,
-                category: formData.category,
-                price: Number(formData.price),
-                badge: formData.badge,
-              }
-            : p,
-        ),
-      );
-    } else {
-      // Logic Tambah
-      const newProduct: Product = {
-        id: Date.now().toString(),
-        name: formData.name,
-        category: formData.category,
-        price: Number(formData.price),
-        badge: formData.badge,
-      };
-      setProducts([...products, newProduct]);
-    }
-
-    setIsModalOpen(false);
+  // Helper formatting Rupiah
+  const formatRupiah = (number: number) => {
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      minimumFractionDigits: 0,
+    }).format(number);
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header & Tombol Tambah */}
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-slate-800">Daftar Produk</h1>
-        <Link
-          href="/admin/products/add-products"
-          className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition-all shadow-sm active:scale-95 cursor-pointer"
-        >
-          <Plus className="w-4 h-4" /> Tambah Produk
-        </Link>
-      </div>
+    <div className="p-6 bg-[#0f111a] min-h-screen text-slate-100">
+      {/* Header & Action */}
+      <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+        <h1 className="text-2xl font-bold">Daftar Produk</h1>
 
-      {/* Input Search */}
-      <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex justify-between gap-4">
-        <div className="relative flex-1">
-          <Search className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
-          <input
-            type="text"
-            placeholder="Cari produk berdasarkan nama..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500"
-          />
+        <div className="flex items-center gap-3 w-full md:w-auto">
+          {/* Form Pencarian */}
+          <SearchInput defaultValue={query} />
+
+          {/* Tombol Tambah Produk */}
+          <Link
+            href="/admin/products/add-products"
+            className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition-all shadow-sm active:scale-95 cursor-pointer"
+          >
+            <Plus className="w-4 h-4" /> Tambah Produk
+          </Link>
         </div>
       </div>
 
       {/* Tabel Produk */}
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
-        <table className="w-full text-left text-sm text-slate-600">
-          <thead className="bg-slate-50 border-b text-slate-700 font-semibold">
-            <tr>
-              <th className="p-4">Nama Produk</th>
-              <th className="p-4">Kategori</th>
-              <th className="p-4">Harga</th>
-              <th className="p-4">Badge</th>
-              <th className="p-4 text-right">Aksi</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y">
-            {filteredProducts.length > 0 ? (
-              filteredProducts.map((item) => (
-                <tr
-                  key={item.id}
-                  className="hover:bg-slate-50 transition-colors"
-                >
-                  <td className="p-4 font-medium text-slate-900">
-                    {item.name}
-                  </td>
-                  <td className="p-4">{item.category}</td>
-                  <td className="p-4">
-                    Rp {item.price.toLocaleString("id-ID")}
-                  </td>
-                  <td className="p-4">
-                    <span className="bg-amber-100 text-amber-800 text-xs px-2.5 py-1 rounded-full font-medium">
-                      {item.badge}
-                    </span>
-                  </td>
-                  <td className="p-4 text-right space-x-2">
-                    <button
-                      onClick={() => handleOpenEditModal(item)}
-                      title="Edit Produk"
-                      className="p-1.5 text-slate-600 hover:text-indigo-600 hover:bg-slate-100 rounded transition-colors"
-                    >
-                      <Edit className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(item.id)}
-                      title="Hapus Produk"
-                      className="p-1.5 text-slate-600 hover:text-red-600 hover:bg-slate-100 rounded transition-colors"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+      <div className="bg-[#181b29] border border-slate-800 rounded-xl overflow-hidden shadow-xl">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr className="border-b border-slate-800 bg-[#131522] text-slate-400">
+                <th className="p-4 font-semibold">Nama Produk</th>
+                <th className="p-4 font-semibold">Kategori</th>
+                <th className="p-4 font-semibold">Harga</th>
+                <th className="p-4 font-semibold">Badge</th>
+                <th className="p-4 font-semibold text-center">Aksi</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-800/60">
+              {products.length > 0 ? (
+                products.map((product) => (
+                  <tr
+                    key={product.id}
+                    className="hover:bg-slate-800/30 transition duration-150"
+                  >
+                    <td className="p-4 font-medium text-slate-200">
+                      {product.title || (
+                        <span className="text-red-400 italic">Tanpa Nama</span>
+                      )}
+                    </td>
+                    <td className="p-4 text-slate-400">
+                      {product.category.name}
+                    </td>
+                    <td className="p-4 text-slate-200 font-medium">
+                      {formatRupiah(Number(product.price))}
+                    </td>
+                    <td className="p-4">
+                      {product.badge ? (
+                        <span
+                          className={`inline-block text-xs font-bold px-2.5 py-1 rounded border ${
+                            product.badge === "HOT"
+                              ? "bg-amber-500/10 text-amber-500 border-amber-500/20"
+                              : "bg-indigo-500/10 text-indigo-400 border-indigo-500/20"
+                          }`}
+                        >
+                          {product.badge}
+                        </span>
+                      ) : (
+                        <span className="text-slate-500">-</span>
+                      )}
+                    </td>
+                    <td className="p-4">
+                      <div className="flex items-center justify-center gap-3">
+                        <Link
+                          href={`/admin/products/edit/${product.id}`}
+                          className="text-slate-400 hover:text-indigo-400 transition"
+                          title="Edit"
+                        >
+                          <FiEdit size={16} />
+                        </Link>
+
+                        {/* Tombol Delete (Action) */}
+                        <DeleteProductButton id={product.id} />
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan={5}
+                    className="p-8 text-center text-slate-500 text-sm"
+                  >
+                    Tidak ada produk ditemukan.
                   </td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={5} className="text-center p-8 text-slate-400">
-                  Tidak ada produk ditemukan.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      {/* MODAL FORM (TAMBAH / EDIT PRODUK) */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl space-y-4">
-            <div className="flex justify-between items-center border-b pb-3">
-              <h3 className="text-lg font-bold text-slate-800">
-                {editingProduct ? "Edit Produk" : "Tambah Produk Baru"}
-              </h3>
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="text-slate-400 hover:text-slate-600 p-1"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Nama Produk
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formData.name}
-                  onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
-                  }
-                  className="w-full border rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
-                  placeholder="Misal: Canva Pro 1 Bulan"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Kategori
-                </label>
-                <select
-                  value={formData.category}
-                  onChange={(e) =>
-                    setFormData({ ...formData, category: e.target.value })
-                  }
-                  className="w-full border rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
-                >
-                  <option value="Akun Game">Akun Game</option>
-                  <option value="Akun Premium">Akun Premium</option>
-                  <option value="Voucher">Voucher</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Harga (Rp)
-                </label>
-                <input
-                  type="number"
-                  required
-                  value={formData.price}
-                  onChange={(e) =>
-                    setFormData({ ...formData, price: e.target.value })
-                  }
-                  className="w-full border rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
-                  placeholder="45000"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Badge Status
-                </label>
-                <select
-                  value={formData.badge}
-                  onChange={(e) =>
-                    setFormData({ ...formData, badge: e.target.value })
-                  }
-                  className="w-full border rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
-                >
-                  <option value="HOT ITEM">HOT ITEM</option>
-                  <option value="BEST SELLER">BEST SELLER</option>
-                  <option value="MURAH">MURAH</option>
-                </select>
-              </div>
-
-              <div className="flex justify-end gap-3 pt-3 border-t">
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-lg"
-                >
-                  Batal
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 text-sm font-medium bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg flex items-center gap-1.5"
-                >
-                  <Check className="w-4 h-4" /> Simpan
-                </button>
-              </div>
-            </form>
-          </div>
+              )}
+            </tbody>
+          </table>
         </div>
-      )}
+      </div>
     </div>
   );
 }
