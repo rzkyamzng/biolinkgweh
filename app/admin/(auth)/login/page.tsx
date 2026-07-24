@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { Lock, Mail, Loader2, AlertCircle } from "lucide-react";
+export const dynamic = "force-dynamic";
 
 export default function AdminLoginPage() {
   const router = useRouter();
