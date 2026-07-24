@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
-import path from "path";
+import { v2 as cloudinary } from "cloudinary";
+
+// Konfigurasi Cloudinary menggunakan Environment Variables
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 export async function POST(req: Request) {
   try {
@@ -15,28 +21,32 @@ export async function POST(req: Request) {
     }
 
     const uploadedUrls: string[] = [];
-    const uploadDir = path.join(process.cwd(), "public/uploads");
-
-    // Pastikan folder public/uploads ada
-    await mkdir(uploadDir, { recursive: true });
 
     for (const file of files) {
       const bytes = await file.arrayBuffer();
       const buffer = Buffer.from(bytes);
 
-      // Beri nama unik agar tidak bentrok
-      const filename = `${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
-      const filePath = path.join(uploadDir, filename);
+      // Upload buffer ke Cloudinary menggunakan Promise
+      const uploadResult: any = await new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          { folder: "biolinkgweh" }, // Nama folder di dalam Cloudinary (opsional)
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          },
+        );
+        uploadStream.end(buffer);
+      });
 
-      await writeFile(filePath, buffer);
-      uploadedUrls.push(`/uploads/${filename}`);
+      // Simpan URL publik dari Cloudinary
+      uploadedUrls.push(uploadResult.secure_url);
     }
 
     return NextResponse.json({ urls: uploadedUrls });
   } catch (error) {
     console.error("Upload Error:", error);
     return NextResponse.json(
-      { message: "Gagal upload gambar" },
+      { message: "Gagal upload gambar ke cloud" },
       { status: 500 },
     );
   }
