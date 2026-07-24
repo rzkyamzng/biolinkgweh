@@ -3,8 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider = "postgresql" // ubah dari sqlite ke postgresql
+  url      = env("DATABASE_URL")
 }
 
 // Model User (Role diubah dari enum menjadi String)
